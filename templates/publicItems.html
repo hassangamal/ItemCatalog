@@ -1,0 +1,43 @@
+{% extends "main.html" %}
+{% block content %}
+{% include "header.html" %}
+
+	<div class="row divider green">
+		<div class="col-md-12"></div>
+	</div>
+	<div class="row banner menu">
+		<div class="col-md-11 col-md-offset-1 padding-none">
+			<h1>{{ catalog.name }}
+			<figure class="creator">
+				<img src="{{ creator.picture}}">
+				<figcaption>{{ creator.name }}</figcaption>
+			</figure>
+			</h1>
+
+		</div>
+	</div>
+	<div class="row padding-top padding-bottom">
+		<div class="col-md-1"></div>
+		<div class="col-md-11 padding-none">
+			
+		</div>
+		<div class="col-md-7"></div>
+	</div>
+
+<div style="display: grid;  grid-template-columns: 1fr 1fr 1fr; grid-column-gap: 5px;padding-bottom:5px;">
+{% for item in items %}
+ <div class="card" style="width: 20rem;">
+    <img class="card-img-top" src="{{item.picture}}" alt="Card image cap" style="height: 160px;">
+   <div class="card-body">
+      <h5 class="card-header" style="font-weight: bold;font-size: 20px">{{item.name}}</h5>
+       <h3 class="card-title" style="text-overflow: ellipsis;  overflow: hidden;
+  width: 160px;
+  height: 1.2em;
+  white-space: nowrap;">{{item.description}}</h3>
+	   <h2 class="card-text">{{item.price}}</h2>
+      <a href="{{url_for('publicshowItem', catalog_id = catalog.id,item_id=item.id)}}" class="btn btn-primary ">Show {{item.name}}</a>
+   </div>
+     </div>
+{% endfor %}
+</div>
+{% endblock %}

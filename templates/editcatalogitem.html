@@ -1,0 +1,54 @@
+{% extends "main.html" %}
+{% block content %}
+{% include "header.html" %}
+	<div class="row divider green">
+		<div class="col-md-12"></div>
+	</div>
+	<div class="row banner menu">
+		<div class="col-md-11 col-md-offset-1 padding-none">
+			<h1>Edit Catalog Item</h1>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-6 col-md-offset-1 padding-top">
+			<form action="{{url_for('editCatalogItem',catalog_id=catalog_id,item_id=item_id)}}" method = "post">
+				<div class="form-group">
+					<label for="name">Name:</label>
+					<input type ="text" maxlength="100" class="form-control" name="name" value="{{item.name }}" required>
+
+					<label for="description">Description:</label>
+					<textarea class="form-control" maxlength="250" rows="3" name="description" required>{{item.description}}</textarea>
+
+					<label for="price" >Price:</label>
+					<div class="input-group">
+						<div class="input-group-addon">$</div>
+						<input type ="text" maxlength="10" class="form-control" name="price" value="{{item.price}}" required>
+					</div>
+					<div class="input-group">
+						<div class="input-group-addon">Picture</div>
+
+						<input type ="text" class="form-control" name="picture" value="{{item.picture}}" required>
+					</div>
+
+					<div>
+					     <select name="catalog">
+          				  {% for catalog in catalogs %}
+							 {% if catalog.id==catalog_id%}
+        		    			<option value="{{catalog.name}}"selected="selected">{{catalog.name}}</option>
+							 {%else%}
+							 	<option value="{{catalog.name}}">{{catalog.name}}</option>
+							 {%endif%}
+         				   {% endfor %}
+        			 </select>
+						</div>
+					<button type="submit" class="btn btn-default" id="submit" type="submit">
+					<span class="glyphicon glyphicon-ok" aria-hidden="true"></span>Save</button>
+					<a href = '{{url_for('showCatalogs')}}'>
+						<button class="btn btn-default delete" type="button">
+						<span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Cancel</button>
+					</a>
+				</div>
+			</form>
+		</div>
+	</div>
+{% endblock %}
