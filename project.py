@@ -18,7 +18,6 @@ CLIENT_ID = json.loads(
     open('client_secrets.json', 'r').read())['web']['client_id']
 APPLICATION_NAME = "Catalog Items Application"
 
-
 # Connect to Database and create database session
 engine = create_engine('sqlite:///ItemsCatalog.db')
 Base.metadata.bind = engine
@@ -45,7 +44,6 @@ def fbconnect():
     access_token = request.data
     print "access token received %s " % access_token
 
-
     app_id = json.loads(open('fb_client_secrets.json', 'r').read())[
         'web']['app_id']
     app_secret = json.loads(
@@ -54,7 +52,6 @@ def fbconnect():
         app_id, app_secret, access_token)
     h = httplib2.Http()
     result = h.request(url, 'GET')[1]
-
 
     # Use token to get user info from API
     userinfo_url = "https://graph.facebook.com/v3.1/me"
@@ -113,7 +110,7 @@ def fbdisconnect():
     facebook_id = login_session['facebook_id']
     # The access token must me included to successfully logout
     access_token = login_session['access_token']
-    url = 'https://graph.facebook.com/%s/permissions?access_token=%s' % (facebook_id,access_token)
+    url = 'https://graph.facebook.com/%s/permissions?access_token=%s' % (facebook_id, access_token)
     h = httplib2.Http()
     result = h.request(url, 'DELETE')[1]
     return "you have been logged out"
@@ -205,17 +202,19 @@ def gconnect():
     output += '!</h1>'
     output += '<img src="'
     output += login_session['picture']
-    output += ' " style = "width: 300px; height: 300px;border-radius: 150px;-webkit-border-radius: 150px;-moz-border-radius: 150px;"> '
+    output += ' " style = "width: 300px; height: 300px;border-radius:' \
+              ' 150px;-webkit-border-radius: 150px;-moz-border-radius: 150px;"> '
     flash("you are now logged in as %s" % login_session['username'])
     print "done!"
     return output
+
 
 # User Helper Functions
 
 
 def createUser(login_session):
     newUser = User(name=login_session['username'], email=login_session[
-                   'email'], picture=login_session['picture'])
+        'email'], picture=login_session['picture'])
     session.add(newUser)
     session.commit()
     user = session.query(User).filter_by(email=login_session['email']).one()
@@ -233,6 +232,7 @@ def getUserID(email):
         return user.id
     except:
         return None
+
 
 # DISCONNECT - Revoke a current user's token and reset their login_session
 
@@ -258,6 +258,7 @@ def gdisconnect():
         response.headers['Content-Type'] = 'application/json'
         return response
 
+
 ################################
 ##########(APIS JOSN)###########
 ################################
@@ -268,6 +269,7 @@ def catalogsJSON():
     catalogs = session.query(Catalog).all()
     return jsonify(Catalogs=[r.serialize for r in catalogs])
 
+
 # JSON APIs to view items of specific Catalog Information
 @app.route('/Api/Catalog/<int:catalog_id>/items/JSON')
 def catalogItemsJSON(catalog_id):
@@ -275,11 +277,13 @@ def catalogItemsJSON(catalog_id):
         catalog_id=catalog_id).all()
     return jsonify(items=[i.serialize for i in items])
 
+
 # JSON APIs to view specific item of specific Catalog Information
 @app.route('/Api/Catalog/<int:catalog_id>/items/<int:item_id>/JSON')
 def itemJSON(catalog_id, item_id):
     item = session.query(Items).filter_by(id=item_id).one()
     return jsonify(Item=item.serialize)
+
 
 ##############################################
 ########### (Code Funcationality CRUD) #######
@@ -289,12 +293,11 @@ def itemJSON(catalog_id, item_id):
 @app.route('/')
 @app.route('/Catalog/')
 def showCatalogs():
-    catalogs=session.query(Catalog).order_by(asc(Catalog.name))
+    catalogs = session.query(Catalog).order_by(asc(Catalog.name))
     if 'username' not in login_session:
         return render_template('publicCatalogs.html', catalogs=catalogs)
     else:
         return render_template('catalogs.html', catalogs=catalogs)
-
 
 
 # Create a new newCatalog
@@ -320,7 +323,8 @@ def editCatalog(catalog_id):
     if 'username' not in login_session:
         return redirect('/login')
     if editedCatalog.user_id != login_session['user_id']:
-        return "<script>function myFunction() {alert('You are not authorized to edit this catalog. Please create your own catalog in order to edit.');}</script><body onload='myFunction()'>"
+        return "<script>function myFunction() {alert('You are not authorized to edit this catalog." \
+               " Please create your own catalog in order to edit.');}</script><body onload='myFunction()'>"
     if request.method == 'POST':
         if request.form['name']:
             editedCatalog.name = request.form['name']
@@ -342,7 +346,8 @@ def deleteCatalog(catalog_id):
     if 'username' not in login_session:
         return redirect('/login')
     if catalogToDelete.user_id != login_session['user_id']:
-        return "<script>function myFunction() {alert('You are not authorized to delete this catalog. Please create your own catalog in order to delete.');}</script><body onload='myFunction()'>"
+        return "<script>function myFunction() {alert('You are not authorized to delete this catalog." \
+               " Please create your own catalog in order to delete.');}</script><body onload='myFunction()'>"
     if request.method == 'POST':
         session.delete(catalogToDelete)
         flash('%s Successfully Deleted' % catalogToDelete.name)
@@ -356,8 +361,8 @@ def deleteCatalog(catalog_id):
 @app.route('/Catalog/<int:catalog_id>/items/')
 def showItems(catalog_id):
     catalog = session.query(Catalog).filter_by(id=catalog_id).one()
-    creator = session.query(User).filter_by(id=catalog. user_id).one()
-    #return str(catalog.user.id)
+    creator = session.query(User).filter_by(id=catalog.user_id).one()
+    # return str(catalog.user.id)
     items = session.query(Items).filter_by(
         catalog_id=catalog_id).all()
     if 'username' not in login_session or catalog.user.id != login_session['user_id']:
@@ -365,15 +370,17 @@ def showItems(catalog_id):
     else:
         return render_template('items.html', items=items, catalog=catalog, creator=catalog)
 
+
 # Show Details of Item
 @app.route('/Catalog/<int:catalog_id>/items/<int:item_id>/Details')
-def publicshowItem(catalog_id,item_id):
+def publicshowItem(catalog_id, item_id):
     item = session.query(Items).filter_by(id=item_id).one()
     catalog = session.query(Catalog).filter_by(id=catalog_id).one()
     if 'username' not in login_session or catalog.user.id != login_session['user_id']:
         return render_template('publicshowItem.html', item=item, catalog=catalog, creator=catalog.user.name)
     else:
         return render_template('showItem.html', item=item, catalog=catalog, creator=catalog.user.name)
+
 
 # Create a new item
 @app.route('/Catalog/<int:catalog_id>/items/new/', methods=['GET', 'POST'])
@@ -382,10 +389,11 @@ def newCatalogItem(catalog_id):
         return redirect('/login')
     catalog = session.query(Catalog).filter_by(id=catalog_id).one()
     if login_session['user_id'] != catalog.user_id:
-        return "<script>function myFunction() {alert('You are not authorized to add menu items to this catalog. Please create your own catalog in order to add items.');}</script><body onload='myFunction()'>"
+        return "<script>function myFunction() {alert('You are not authorized to add menu items to this catalog." \
+               " Please create your own catalog in order to add items.');}</script><body onload='myFunction()'>"
     if request.method == 'POST':
         item = Items(name=request.form['name'], description=request.form['description'], price=request.form[
-                               'price'], picture=request.form['picture'],catalog=catalog)
+            'price'], picture=request.form['picture'], catalog=catalog)
         session.add(item)
         session.commit()
         flash('New Menu %s Item Successfully Created' % (item.name))
@@ -402,7 +410,8 @@ def editCatalogItem(catalog_id, item_id):
     editedItem = session.query(Items).filter_by(id=item_id).one()
     catalog = session.query(Catalog).filter_by(id=catalog_id).one()
     if login_session['user_id'] != catalog.user_id:
-        return "<script>function myFunction() {alert('You are not authorized to edit item items to this catalog. Please create your own catalog in order to edit items.');}</script><body onload='myFunction()'>"
+        return "<script>function myFunction() {alert('You are not authorized to edit item items to this catalog. " \
+               "Please create your own catalog in order to edit items.');}</script><body onload='myFunction()'>"
     if request.method == 'POST':
         editedItem1 = session.query(Items).filter_by(id=item_id).one()
         if request.form['name']:
@@ -420,7 +429,7 @@ def editCatalogItem(catalog_id, item_id):
         else:
             session.delete(editedItem)
             session.commit()
-            newitem = Items(name=editedItem1.name, description=editedItem1.description,price=editedItem1.price
+            newitem = Items(name=editedItem1.name, description=editedItem1.description, price=editedItem1.price
                             , picture=editedItem1.picture, catalog=catalog1)
             session.add(newitem)
             session.commit()
@@ -429,8 +438,9 @@ def editCatalogItem(catalog_id, item_id):
         return redirect(url_for('showItems', catalog_id=editedItem1.catalog_id))
     else:
         catalogs = session.query(Catalog).all()
-       # return str(editedItem.id)
-        return render_template('editcatalogitem.html', catalogs=catalogs,catalog_id=catalog_id, item_id=item_id, item=editedItem)
+        # return str(editedItem.id)
+        return render_template('editcatalogitem.html', catalogs=catalogs, catalog_id=catalog_id, item_id=item_id,
+                               item=editedItem)
 
 
 # Delete a catalog item
@@ -441,14 +451,15 @@ def deleteCatalogItem(catalog_id, item_id):
     restaurant = session.query(Catalog).filter_by(id=catalog_id).one()
     itemToDelete = session.query(Items).filter_by(id=item_id).one()
     if login_session['user_id'] != restaurant.user_id:
-        return "<script>function myFunction() {alert('You are not authorized to delete catalog items to this catalog. Please create your own catalog in order to delete items.');}</script><body onload='myFunction()'>"
+        return "<script>function myFunction() {alert('You are not authorized to delete catalog items to this catalog." \
+               " Please create your own catalog in order to delete items.');}</script><body onload='myFunction()'>"
     if request.method == 'POST':
         session.delete(itemToDelete)
         session.commit()
         flash('Menu Item Successfully Deleted')
         return redirect(url_for('showItems', catalog_id=catalog_id))
     else:
-        return render_template('deletecatalogItem.html', item=itemToDelete,catalog_id=catalog_id)
+        return render_template('deletecatalogItem.html', item=itemToDelete, catalog_id=catalog_id)
 
 
 # Disconnect based on provider
