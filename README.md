@@ -7,11 +7,19 @@ Item Catalog Project Web Application with Flask framework.
 
 2- install python 2.7
 
-3- run database python itemcatalog/catalog_db.py
+3- Install Flask
 
-4- run insert first data  python itemcatalog/database_input.py
+4- Install Jinja2
 
-5- run project python itemcatlog/project.py in  http://localhost:5000
+5- Install SQLAchemy
+
+6- Install OAuth
+
+7- run database python itemcatalog/catalog_db.py
+
+8- run insert first data  python itemcatalog/database_input.py
+
+9- run project python itemcatlog/project.py in  http://localhost:5000
 
 
 # Using Google Login
