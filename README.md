@@ -44,3 +44,6 @@ Item Catalog Project Web Application with Flask framework.
  
  3- Item JSON : http://localhost:5000/Api/Catalog/<int:catalog_id>/items/<int:item_id>/JSON - Display Catalog Item Data.
 
+# Deploy this Project in Amazon AWS
+
+- Follow this Link https://github.com/hassangamal/linux-configuration/
